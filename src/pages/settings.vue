@@ -9,7 +9,11 @@
                     Configurações
                 </v-list-subheader>
 
-                <v-switch v-model="isDark" label="Modo Escuro" inset />
+                <v-switch
+                    v-model="isDark"
+                    :label="isDark ? '🌙 Modo Escuro' : '☀️ Modo Claro'"
+                    inset
+                />
             </v-col>
         </v-row>
     </v-container>
