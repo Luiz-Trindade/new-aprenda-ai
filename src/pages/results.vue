@@ -1,5 +1,5 @@
 <template>
-    <v-container class="fade-in">
+    <v-container class="fade-in fill-height d-flex align-center justify-center">
         <v-row>
             <v-col cols="12" class="d-flex flex-column align-center">
                 <v-list-subheader class="mb-4 text-center">
@@ -8,24 +8,28 @@
                 </v-list-subheader>
 
                 <!-- Lista de Todos os Tópicos -->
-                <v-card v-for="topic in allTopics" :key="topic.id" class="mb-4" width="100%"
-                    @click="viewDetails(topic.id)">
+                <v-card v-for="topic in allTopics" :key="topic.id" class="mb-4" width="100%">
                     <v-card-item>
-                        <v-card-title>
+                        <v-card-title class="text-body-1">
                             <v-icon class="mr-2">{{ getTopicIcon(topic.category) }}</v-icon>
                             {{ topic.title }}
-                        </v-card-title>
 
-                        <v-card-subtitle class="d-flex align-center mt-2">
-                            <v-chip small :color="getDifficultyColor(topic.difficulty)" class="mr-2">
+                            <v-chip small :color="getDifficultyColor(topic.difficulty)" class="ml-2">
                                 {{ topic.difficulty }}
                             </v-chip>
-                            
-                            <span class="text-caption">
-                                {{ topic.questions || 0 }} questões
-                            </span>
-                        </v-card-subtitle>
+                        </v-card-title>
                     </v-card-item>
+
+                    <v-card-actions>
+                        <v-btn class="elevation-2" variant="flat" rounded="xl" color="success" @click="viewDetails(topic.id)" size="small">
+                            <v-icon start class="mr-1">mdi-chart-bar</v-icon>
+                            Resultados
+                        </v-btn>
+                        <v-spacer></v-spacer>
+                        <span class="text-caption">
+                            {{ topic.questions || 0 }} questões
+                        </span>
+                    </v-card-actions>
                 </v-card>
 
                 <!-- Mensagem quando não há tópicos -->
@@ -99,14 +103,4 @@ onMounted(() => {
 })
 </script>
 
-<style scoped>
-.v-card {
-    transition: transform 0.2s;
-    cursor: pointer;
-}
-
-.v-card:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-</style>
+<style scoped></style>

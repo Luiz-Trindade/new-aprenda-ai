@@ -14,8 +14,7 @@
                 </v-btn>
 
                 <!-- Lista simplificada de tópicos -->
-                <v-card v-for="topic in topics" :key="topic.id" class="mb-3 topic-card elevation-4" width="100%"
-                    max-width="500">
+                <v-card v-for="topic in topics" :key="topic.id" class="mb-3 topic-card elevation-2" width="100%">
                     <!-- Botão de fechar -->
                     <v-btn icon variant="text" size="x-small" class="close-btn" @click.stop="confirmDelete(topic)">
                         <v-icon>mdi-close</v-icon>
@@ -25,6 +24,7 @@
                         <v-card-title class="text-body-1">
                             <v-icon class="mr-2">{{ getTopicIcon(topic.category) }}</v-icon>
                             {{ topic.title }}
+                            
                             <v-chip small :color="getDifficultyColor(topic.difficulty)" class="ml-2">
                                 {{ topic.difficulty }}
                             </v-chip>
