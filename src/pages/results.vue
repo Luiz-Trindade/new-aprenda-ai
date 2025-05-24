@@ -36,7 +36,7 @@
                 <v-card v-if="allTopics.length === 0" class="pa-6 text-center">
                     <v-icon size="large" class="mb-2">mdi-chart-line</v-icon>
                     <p class="text-body-1">Nenhum tópico encontrado</p>
-                    <v-btn color="primary" class="mt-4" @click="navigateTo('/create-topic')">
+                    <v-btn color="primary" class="mt-4" @click="navigateTo('/topics')">
                         <v-icon start>mdi-plus</v-icon>
                         Criar Primeiro Tópico
                     </v-btn>
