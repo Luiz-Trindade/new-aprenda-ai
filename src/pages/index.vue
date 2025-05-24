@@ -95,7 +95,7 @@ const topicOfTheDay = ref({
 // Ações principais
 const mainActions = [
     { text: "Explorar Tópicos", icon: "mdi-book-open", action: "explore" },
-    { text: "Criar Novo Tópico", icon: "mdi-plus-circle", action: "create" },
+    // { text: "Criar Novo Tópico", icon: "mdi-plus-circle", action: "create" },
     { text: "Testar Conhecimento", icon: "mdi-play-circle", action: "quiz" },
     { text: "Meu Progresso", icon: "mdi-chart-line", action: "progress" },
 ];

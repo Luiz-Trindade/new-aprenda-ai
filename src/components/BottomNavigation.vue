@@ -26,6 +26,7 @@ const items = [
     { value: 'topics',      icon: 'mdi-format-list-bulleted',   label: '', route: '/topics' },
     { value: 'results',     icon: 'mdi-chart-bar',              label: '', route: '/results' },
     { value: 'settings',    icon: 'mdi-cog',                    label: '', route: '/settings' },
+    // { value: 'settings',    icon: 'mdi-cog',                    label: '', route: '/settings' },
 ]
 
 // Define a aba ativa com base na rota atual
