@@ -9,7 +9,7 @@
                 </v-list-subheader>
 
                 <!-- Status do Usuário -->
-                <v-card block class="mb-6 pa-4 text-center elevation-4" width="100%">
+                <v-card block class="mb-6 pa-4 text-center elevation-2" width="100%">
                     <v-icon color="primary" size="large">mdi-robot-happy</v-icon>
                     <p class="mt-2 mb-0 text-body-1">Bem-vindo ao seu aprendizado!</p>
                     <p class="text-caption text-medium-emphasis">
@@ -21,7 +21,7 @@
                 </v-card>
 
                 <!-- Tópico do Dia -->
-                <v-card class="mb-6 elevation-4" width="100%">
+                <v-card class="mb-6 elevation-2" width="100%">
                     <v-card-title class="text-body-1">
                         <v-icon class="mr-2">mdi-lightbulb-on</v-icon>
                         Tópico do Dia
@@ -37,6 +37,7 @@
                             color="success" 
                             block 
                             rounded="xl"
+                            class="elevation-2"
                             @click="startTopic(topicOfTheDay)"
                         >
                             <v-icon start>mdi-play</v-icon>
@@ -46,7 +47,7 @@
                 </v-card>
 
                 <!-- Botões Principais -->
-                <v-card class="mb-6 elevation-4" width="100%" style="padding: 10px;">
+                <v-card class="mb-6 elevation-2" width="100%" style="padding: 10px;">
                     <v-card-title class="text-body-1">
                         <v-icon class="mr-2">mdi-cog</v-icon>
                         Ações
@@ -59,8 +60,7 @@
                                 v-for="(item, i) in mainActions" 
                                 :key="i" 
                                 color="primary" 
-                                class="mb-3" 
-                                :elevation="4"
+                                class="mb-3 elevation-2" 
                                 rounded="xl" 
                                 @click="handleAction(item.action)"
                             >

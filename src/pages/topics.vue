@@ -32,7 +32,7 @@
                     </v-card-item>
 
                     <v-card-actions>
-                        <v-btn variant="flat" rounded="xl" color="warning" @click="startQuiz(topic.id)" size="small">
+                        <v-btn class="elevation-2" variant="flat" rounded="xl" color="warning" @click="startQuiz(topic.id)" size="small">
                             <v-icon start class="mr-1">mdi-lightbulb</v-icon>
                             Testar
                         </v-btn>
