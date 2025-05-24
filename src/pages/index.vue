@@ -9,7 +9,7 @@
                 </v-list-subheader>
 
                 <!-- Status do Usuário -->
-                <v-card variant="outlined" class="mb-6 pa-4 text-center elevation-4" width="100%">
+                <v-card variant="tonal" block class="mb-6 pa-4 text-center elevation-4" width="100%">
                     <v-icon color="primary" size="large">mdi-robot-happy</v-icon>
                     <p class="mt-2 mb-0 text-body-1">Bem-vindo ao seu aprendizado!</p>
                     <p class="text-caption text-medium-emphasis">
