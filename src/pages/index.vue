@@ -107,7 +107,7 @@ function getTopicDescription(difficulty) {
 // Ações principais
 const mainActions = [
     { text: "Explorar Tópicos", icon: "mdi-book-open", action: "explore" },
-    { text: "Testar Conhecimento", icon: "mdi-play-circle", action: "quiz" },
+    // { text: "Testar Conhecimento", icon: "mdi-play-circle", action: "quiz" },
     { text: "Meu Progresso", icon: "mdi-chart-line", action: "progress" },
 ];
 
@@ -128,7 +128,8 @@ function handleAction(action: string) {
 
 // Iniciar tópico específico
 function startTopic(topic: any) {
-    router.push(`/learn/${topic.id}`);
+    // router.push(`/learn/${topic.id}`);
+    router.push("/quiz");
 }
 
 // Iniciar quiz aleatório

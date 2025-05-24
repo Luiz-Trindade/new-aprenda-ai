@@ -24,7 +24,7 @@
                         <v-card-title class="text-body-1">
                             <v-icon class="mr-2">{{ getTopicIcon(topic.category) }}</v-icon>
                             {{ topic.title }}
-                            
+
                             <v-chip small :color="getDifficultyColor(topic.difficulty)" class="ml-2">
                                 {{ topic.difficulty }}
                             </v-chip>
@@ -186,7 +186,8 @@ function getTopicIcon(category) {
 
 // Navegação
 function startQuiz(topicId) {
-    router.push(`/quiz/${topicId}`)
+    // router.push(`/quiz/${topicId}`);
+    router.push("/quiz");
 }
 </script>
 
