@@ -32,7 +32,14 @@
                     </v-card-text>
 
                     <v-card-actions>
-                        <v-btn variant="flat" color="success" block @click="startTopic(topicOfTheDay)">
+                        <v-btn 
+                            variant="flat" 
+                            color="success" 
+                            block 
+                            rounded="xl"
+                            @click="startTopic(topicOfTheDay)"
+                        >
+                            <v-icon start>mdi-play</v-icon>
                             Começar
                         </v-btn>
                     </v-card-actions>
@@ -47,8 +54,16 @@
 
                     <v-row>
                         <v-col cols="12" class="d-flex flex-column align-center">
-                            <v-btn v-for="(item, i) in mainActions" :key="i" color="primary" class="mb-3 action-btn" :elevation="4"
-                                rounded="xl" @click="handleAction(item.action)">
+                            <v-btn 
+                                block 
+                                v-for="(item, i) in mainActions" 
+                                :key="i" 
+                                color="primary" 
+                                class="mb-3" 
+                                :elevation="4"
+                                rounded="xl" 
+                                @click="handleAction(item.action)"
+                            >
                                 <v-icon start>{{ item.icon }}</v-icon>
                                 {{ item.text }}
                             </v-btn>
