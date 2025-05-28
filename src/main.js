@@ -19,6 +19,11 @@ import 'unfonts.css'
 
 const app = createApp(App)
 
+// Define a variável global `endpoint`
+//app.config.globalProperties.endpoint = 'http://localhost:8000/api'
+app.config.globalProperties.endpoint = 'https://grupo-colab.tech:8100/api'
+
+// Plugins
 app.use(VueApexCharts);
 registerPlugins(app)
 

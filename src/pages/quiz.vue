@@ -19,7 +19,14 @@
                 </v-card-text>
 
                 <v-card-actions>
-                    <v-btn variant="flat" block rounded="xl" color="primary" size="large" @click="startQuiz" class="mt-4 elevation-2">
+                    <v-btn 
+                        variant="flat" 
+                        block rounded="xl" 
+                        color="primary" 
+                        size="large" 
+                        @click="startQuiz" 
+                        class="mt-4 elevation-2"
+                    >
                         <v-icon start>mdi-play</v-icon>
                         Iniciar Quiz
                     </v-btn>
@@ -97,7 +104,7 @@
                 </v-card-text>
                 <v-card-actions class="justify-center">
                     <!-- <v-btn size="small" variant="flat" color="warning" @click="resetQuiz">Fazer outro quiz</v-btn> -->
-                    <v-btn size="small" variant="flat" color="success" @click="router.push('/topics')">
+                    <v-btn size="small" variant="flat" color="success" @click="this.$router.push('/topics')">
                         Voltar aos tópicos
                     </v-btn>
                 </v-card-actions>
@@ -106,246 +113,202 @@
     </v-container>
 </template>
 
-<script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
+<script>
+export default {
+    name: 'QuizComponent',
 
-const router = useRouter()
+    data() {
+        return {
+            // Estado do Quiz
+            quizStarted: false,
+            currentQuestionIndex: 0,
+            selectedAnswer: null,
+            score: 0,
+            showFeedback: false,
+            answerIsCorrect: false,
+            showResults: false,
 
-// Estado do Quiz
-const quizStarted = ref(false)
-const currentQuestionIndex = ref(0)
-const selectedAnswer = ref(null)
-const score = ref(0)
-const showFeedback = ref(false)
-const answerIsCorrect = ref(false)
-const showResults = ref(false)
+            // Tópico atual (mockado – você pode carregar do localStorage)
+            currentTopic: {
+                id: '1',
+                title: 'Introdução à Inteligência Artificial',
+                difficulty: 'Médio',
+                category: 'ai'
+            },
 
-// Tópico atual (mockado - seria carregado do localStorage na prática)
-const currentTopic = ref({
-    id: '1',
-    title: 'Introdução à Inteligência Artificial',
-    difficulty: 'Médio',
-    category: 'ai'
-})
+            // Conteúdo do tópico (mockado)
+            topicContent: [
+                /*'Inteligência Artificial (IA) é um ramo da ciência da computação que se concentra no desenvolvimento de sistemas capazes de realizar tarefas que normalmente exigiriam inteligência humana.',
+                'Essas tarefas incluem aprendizado, raciocínio, resolução de problemas, percepção e compreensão de linguagem. A IA pode ser classificada em três tipos: IA estreita (ou fraca), IA geral (ou forte) e superinteligência.',
+                'Aplicações comuns de IA incluem assistentes virtuais, carros autônomos, sistemas de recomendação e diagnósticos médicos. O aprendizado de máquina, um subcampo da IA, permite que os sistemas aprendam e melhorem com a experiência sem serem explicitamente programados.'*/
+                "Aguarde, texto sendo gerado..."
+            ],
 
-// Ícone do tópico
-const topicIcon = computed(() => {
-    return {
-        ai: 'mdi-robot',
-        programming: 'mdi-code-braces',
-        math: 'mdi-calculator'
-    }[currentTopic.value.category] || 'mdi-book'
-})
-
-// Conteúdo do tópico (mockado)
-const topicContent = [
-    'Inteligência Artificial (IA) é um ramo da ciência da computação que se concentra no desenvolvimento de sistemas capazes de realizar tarefas que normalmente exigiriam inteligência humana.',
-    'Essas tarefas incluem aprendizado, raciocínio, resolução de problemas, percepção e compreensão de linguagem. A IA pode ser classificada em três tipos: IA estreita (ou fraca), IA geral (ou forte) e superinteligência.',
-    'Aplicações comuns de IA incluem assistentes virtuais, carros autônomos, sistemas de recomendação e diagnósticos médicos. O aprendizado de máquina, um subcampo da IA, permite que os sistemas aprendam e melhorem com a experiência sem serem explicitamente programados.'
-]
-
-// Exemplo de pergunta
-// {
-//     text: 'O que é Inteligência Artificial?',
-//         options: [
-//             { text: 'Um tipo de hardware especializado', correct: false },
-//             { text: 'Sistemas que imitam inteligência humana', correct: true },
-//             { text: 'Uma linguagem de programação', correct: false },
-//             { text: 'Um sistema operacional', correct: false }
-//         ],
-//             explanation: 'IA refere-se a sistemas que imitam funções cognitivas humanas.'
-// },
-
-
-// Perguntas do quiz (mockadas)
-const questions = ref([
-    {
-        text: 'O que é Inteligência Artificial?',
-        options: [
-            { text: 'Um tipo de hardware especializado', correct: false },
-            { text: 'Sistemas que imitam inteligência humana', correct: true },
-            { text: 'Uma linguagem de programação', correct: false },
-            { text: 'Um sistema operacional', correct: false }
-        ],
-        explanation: 'IA refere-se a sistemas que imitam funções cognitivas humanas.'
+            // Perguntas do quiz (mockadas)
+            questions: [
+                /*{
+                    text: 'O que é Inteligência Artificial?',
+                    options: [
+                        { text: 'Um tipo de hardware especializado', correct: false },
+                        { text: 'Sistemas que imitam inteligência humana', correct: true },
+                        { text: 'Uma linguagem de programação', correct: false },
+                        { text: 'Um sistema operacional', correct: false }
+                    ],
+                    explanation: 'IA refere-se a sistemas que imitam funções cognitivas humanas.'
+                },*/
+                // ... (outras perguntas mantidas iguais)
+            ]
+        }
     },
-    {
-        text: 'Qual destes é um exemplo de IA estreita?',
-        options: [
-            { text: 'Um sistema que pode realizar qualquer tarefa intelectual humana', correct: false },
-            { text: 'Um assistente virtual como Siri ou Alexa', correct: true },
-            { text: 'Um robô com consciência própria', correct: false },
-            { text: 'Um computador quântico', correct: false }
-        ],
-        explanation: 'Assistentes virtuais são exemplos de IA estreita, projetados para tarefas específicas.'
+
+    computed: {
+        topicIcon() {
+            const icons = {
+                ai: 'mdi-robot',
+                programming: 'mdi-code-braces',
+                math: 'mdi-calculator'
+            }
+            return icons[this.currentTopic.category] || 'mdi-book'
+        },
+        currentQuestion() {
+            return this.questions[this.currentQuestionIndex]
+        },
+        isLastQuestion() {
+            return this.currentQuestionIndex === this.questions.length - 1
+        },
+        correctAnswerText() {
+            const opt = this.currentQuestion.options.find(o => o.correct)
+            return opt ? opt.text : ''
+        },
+        resultColor() {
+            const pct = (this.score / this.questions.length) * 100
+            if (pct >= 80) return 'success'
+            if (pct >= 50) return 'warning'
+            return 'error'
+        },
+        resultMessage() {
+            const pct = (this.score / this.questions.length) * 100
+            if (pct >= 80) return 'Excelente!'
+            if (pct >= 50) return 'Bom trabalho!'
+            return 'Continue praticando!'
+        },
+        resultDescription() {
+            const pct = (this.score / this.questions.length) * 100
+            if (pct >= 80) return 'Você demonstrou um ótimo entendimento do tema.'
+            if (pct >= 50) return 'Você tem um bom conhecimento básico, mas pode melhorar.'
+            return 'Recomendamos revisar o material e tentar novamente.'
+        }
     },
-    {
-        text: 'O que é machine learning?',
-        options: [
-            { text: 'Programação explícita de regras', correct: false },
-            { text: 'Sistemas que aprendem com dados', correct: true },
-            { text: 'Montagem de computadores', correct: false },
-            { text: 'Um tipo de rede neural biológica', correct: false }
-        ],
-        explanation: 'Machine learning é um subcampo da IA onde sistemas aprendem padrões a partir de dados.'
+
+    methods: {
+        startQuiz() {
+            this.quizStarted = true
+        },
+        checkAnswer() {
+            this.showFeedback = true
+            const opt = this.currentQuestion.options[this.selectedAnswer]
+            this.answerIsCorrect = opt && opt.correct
+
+            if (this.answerIsCorrect) {
+                this.score++
+            }
+        },
+        nextQuestion() {
+            this.showFeedback = false
+            this.selectedAnswer = null
+
+            if (this.isLastQuestion) {
+                this.showResults = true
+            } else {
+                this.currentQuestionIndex++
+            }
+        },
+        resetQuiz() {
+            this.quizStarted = false
+            this.currentQuestionIndex = 0
+            this.selectedAnswer = null
+            this.score = 0
+            this.showFeedback = false
+            this.showResults = false
+        },
+        fetchTopicText() {
+            // Usa a variável global `endpoint`
+            const topic = localStorage.getItem("topic");
+            const difficulty = localStorage.getItem("difficulty")
+
+            fetch(`${this.endpoint}/generate_topic_text/${topic}/${difficulty}/`)
+                .then(res => res.json())
+                .then(data => {
+                    // faça algo com a resposta
+                    console.log(data);
+                    this.topicContent = this.formatTopicText(data);
+                })
+                .catch(err => console.error(err))
+        },
+        formatTopicText(topicData) {
+            if (!topicData || typeof topicData.topic_text !== 'string') {
+                return [];
+            }
+
+            // Remove cabeçalhos markdown (###, ####, etc.)
+            const cleanText = topicData.topic_text.replace(/^#+\s*/gm, '');
+
+            // Divide por dois ou mais line breaks para isolar os parágrafos
+            const paragraphs = cleanText.split(/\n{2,}/).map(p => p.trim()).filter(p => p);
+
+            return paragraphs;
+        },
+        setTopicTitle() {
+            const topic = localStorage.getItem("topic");
+            const difficulty = localStorage.getItem("difficulty")
+
+            this.currentTopic.title = topic;
+            this.currentTopic.difficulty = difficulty;
+        },
+        fetchTopicQuiz() {
+            // Usa a variável global `endpoint`
+            const topic = localStorage.getItem("topic");
+            const difficulty = localStorage.getItem("difficulty")
+            console.log("QUIZ")
+
+            fetch(`${this.endpoint}/generate_topic_quiz/${topic}/${difficulty}/`)
+                .then(res => res.json())
+                .then(data => {
+                    // faça algo com a resposta
+                    console.log(data);
+                    this.questions = this.extractJsonFromFormattedString(data);
+                })
+                .catch(err => console.error(err))
+        },
+        extractJsonFromFormattedString(input) {
+            try {
+                const raw = input.topic_quiz;
+
+                // Remove as marcações de bloco de código (ex: ```json\n ... \n```)
+                const cleaned = raw.replace(/```json\n?/, '').replace(/\n?```$/, '');
+
+                // Faz o parse do JSON limpo
+                const parsed = JSON.parse(cleaned);
+                return parsed;
+            } catch (error) {
+                console.error('Erro ao extrair JSON:', error);
+                return null;
+            }
+        }
+
     },
-    {
-        text: 'Qual destes NÃO é um tipo de aprendizado de máquina?',
-        options: [
-            { text: 'Aprendizado supervisionado', correct: false },
-            { text: 'Aprendizado não supervisionado', correct: false },
-            { text: 'Aprendizado por reforço', correct: false },
-            { text: 'Aprendizado manual', correct: true }
-        ],
-        explanation: 'Os três principais tipos são supervisionado, não supervisionado e por reforço.'
-    },
-    {
-        text: 'O que é uma rede neural?',
-        options: [
-            { text: 'Um sistema de cabos de internet', correct: false },
-            { text: 'Um algoritmo inspirado no cérebro humano', correct: true },
-            { text: 'Um tipo de banco de dados', correct: false },
-            { text: 'Um protocolo de comunicação', correct: false }
-        ],
-        explanation: 'Redes neurais são algoritmos inspirados na estrutura do cérebro biológico.'
-    },
-    {
-        text: 'Qual destes é um desafio ético da IA?',
-        options: [
-            { text: 'Viés algorítmico', correct: false },
-            { text: 'Privacidade de dados', correct: false },
-            { text: 'Deslocamento de empregos', correct: false },
-            { text: 'Todos os anteriores', correct: true }
-        ],
-        explanation: 'A IA apresenta vários desafios éticos incluindo todos esses mencionados.'
-    },
-    {
-        text: 'O que é PLN (Processamento de Linguagem Natural)?',
-        options: [
-            { text: 'Uma linguagem de programação', correct: false },
-            { text: 'Um ramo da IA que lida com linguagem humana', correct: true },
-            { text: 'Um protocolo de rede', correct: false },
-            { text: 'Um tipo de banco de dados', correct: false }
-        ],
-        explanation: 'PLN permite que computadores entendam, interpretem e gerem linguagem humana.'
-    },
-    {
-        text: 'Qual empresa desenvolveu o ChatGPT?',
-        options: [
-            { text: 'Google', correct: false },
-            { text: 'OpenAI', correct: true },
-            { text: 'Microsoft', correct: false },
-            { text: 'Amazon', correct: false }
-        ],
-        explanation: 'ChatGPT foi desenvolvido pela OpenAI.'
-    },
-    {
-        text: 'O que é deep learning?',
-        options: [
-            { text: 'Um tipo de aprendizado profundo usando redes neurais com muitas camadas', correct: true },
-            { text: 'Um método de programação detalhada', correct: false },
-            { text: 'Um tipo de banco de dados', correct: false },
-            { text: 'Um protocolo de internet', correct: false }
-        ],
-        explanation: 'Deep learning usa redes neurais com múltiplas camadas para aprender representações de dados.'
-    },
-    {
-        text: 'Qual destes é um framework popular para deep learning?',
-        options: [
-            { text: 'TensorFlow', correct: false },
-            { text: 'PyTorch', correct: false },
-            { text: 'Keras', correct: false },
-            { text: 'Todos os anteriores', correct: true }
-        ],
-        explanation: 'Todos são frameworks populares para desenvolvimento de modelos de deep learning.'
-    }
-])
 
-// Computed properties
-const currentQuestion = computed(() => {
-    return questions.value[currentQuestionIndex.value]
-})
-
-const isLastQuestion = computed(() => {
-    return currentQuestionIndex.value === questions.value.length - 1
-})
-
-const correctAnswerText = computed(() => {
-    const correctIndex = currentQuestion.value.options.findIndex(opt => opt.correct)
-    return currentQuestion.value.options[correctIndex].text
-})
-
-const resultColor = computed(() => {
-    const percentage = (score.value / questions.value.length) * 100
-    if (percentage >= 80) return 'success'
-    if (percentage >= 50) return 'warning'
-    return 'error'
-})
-
-const resultMessage = computed(() => {
-    const percentage = (score.value / questions.value.length) * 100
-    if (percentage >= 80) return 'Excelente!'
-    if (percentage >= 50) return 'Bom trabalho!'
-    return 'Continue praticando!'
-})
-
-const resultDescription = computed(() => {
-    const percentage = (score.value / questions.value.length) * 100
-    if (percentage >= 80) return 'Você demonstrou um ótimo entendimento do tema.'
-    if (percentage >= 50) return 'Você tem um bom conhecimento básico, mas pode melhorar.'
-    return 'Recomendamos revisar o material e tentar novamente.'
-})
-
-// Métodos
-function startQuiz() {
-    quizStarted.value = true
-}
-
-function checkAnswer() {
-    showFeedback.value = true
-    answerIsCorrect.value = currentQuestion.value.options[selectedAnswer.value].correct
-
-    if (answerIsCorrect.value) {
-        score.value++
+    mounted() {
+        // Aqui você pode carregar o tópico de localStorage, se quiser:
+        // const saved = localStorage.getItem('current_topic')
+        // if (saved) this.currentTopic = JSON.parse(saved)
+        this.setTopicTitle();
+        this.fetchTopicText();
+        this.fetchTopicQuiz();
     }
 }
-
-function nextQuestion() {
-    showFeedback.value = false
-    selectedAnswer.value = null
-
-    if (isLastQuestion.value) {
-        showResults.value = true
-    } else {
-        currentQuestionIndex.value++
-    }
-}
-
-function resetQuiz() {
-    quizStarted.value = false
-    currentQuestionIndex.value = 0
-    selectedAnswer.value = null
-    score.value = 0
-    showFeedback.value = false
-    showResults.value = false
-}
-
-// Carregar tópico do localStorage (simulado)
-onMounted(() => {
-    // Na prática, você carregaria do localStorage:
-    // const savedTopic = localStorage.getItem('test_topic')
-    // if (savedTopic) currentTopic.value = JSON.parse(savedTopic)
-
-    // Mockando um tópico para demonstração
-    currentTopic.value = {
-        id: '1',
-        title: 'Introdução à Inteligência Artificial',
-        difficulty: 'Médio',
-        category: 'ai'
-    }
-})
 </script>
+
 
 <style scoped>
 .topic-intro {

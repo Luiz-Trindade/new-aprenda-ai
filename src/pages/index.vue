@@ -33,7 +33,7 @@
 
                     <v-card-actions>
                         <v-btn variant="flat" color="success" block rounded="xl" class="elevation-2"
-                            @click="startTopic(randomTopic)">
+                            @click="startTopic(randomTopic.title, randomTopic.difficulty)">
                             <v-icon start>mdi-play</v-icon>
                             Começar
                         </v-btn>
@@ -127,8 +127,12 @@ function handleAction(action: string) {
 }
 
 // Iniciar tópico específico
-function startTopic(topic: any) {
+function startTopic(title: any, difficulty: any) {
     // router.push(`/learn/${topic.id}`);
+    localStorage.setItem("topic", title);
+    localStorage.setItem("difficulty", difficulty);
+    
+    router.push("/quiz");
     router.push("/quiz");
 }
 

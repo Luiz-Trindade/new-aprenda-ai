@@ -32,7 +32,7 @@
                     </v-card-item>
 
                     <v-card-actions>
-                        <v-btn class="elevation-2" variant="flat" rounded="xl" color="warning" @click="startQuiz(topic.id)" size="small">
+                        <v-btn class="elevation-2" variant="flat" rounded="xl" color="warning" @click="startQuiz(topic.title, topic.difficulty)" size="small">
                             <v-icon start class="mr-1">mdi-lightbulb</v-icon>
                             Testar
                         </v-btn>
@@ -185,8 +185,11 @@ function getTopicIcon(category) {
 }
 
 // Navegação
-function startQuiz(topicId) {
+function startQuiz(title, difficulty) {
     // router.push(`/quiz/${topicId}`);
+    localStorage.setItem("topic", title);
+    localStorage.setItem("difficulty", difficulty);
+    
     router.push("/quiz");
 }
 </script>
