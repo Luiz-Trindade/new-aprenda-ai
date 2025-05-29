@@ -1,5 +1,5 @@
 <template>
-    <v-container class="fade-in">
+    <v-container class="fade-in  fill-height d-flex align-center justify-center">
         <!-- Tela de Introdução do Tópico -->
         <div v-if="!quizStarted" class="topic-intro">
             <v-card class="pa-6 mb-6" elevation="2">
@@ -9,8 +9,14 @@
                 </v-card-title>
 
                 <v-card-text class="text-body-1">
-                    <div class="mb-4" v-for="(paragraph, index) in topicContent" :key="'para-' + index">
+                    <div v-if="topicContent.length > 1" class="mb-4" v-for="(paragraph, index) in topicContent"
+                        :key="'para-' + index">
                         {{ paragraph }}
+                    </div>
+
+                    <div v-else style="display: flex; align-items: center; justify-content: center; flex-direction: column;">
+                        <v-progress-circular class="mb-2" :size="70" :width="7" color="blue" indeterminate></v-progress-circular>
+                        <h4>Carregando quiz...</h4>
                     </div>
 
                     <v-alert type="info" variant="tonal" class="mt-6">
@@ -19,14 +25,8 @@
                 </v-card-text>
 
                 <v-card-actions>
-                    <v-btn 
-                        variant="flat" 
-                        block rounded="xl" 
-                        color="primary" 
-                        size="large" 
-                        @click="startQuiz" 
-                        class="mt-4 elevation-2"
-                    >
+                    <v-btn variant="flat" block rounded="xl" color="primary" size="large" class="mt-4 elevation-2"
+                        @click="startQuiz" :disabled="!(topicContent.length > 1 && questions.length > 0)">
                         <v-icon start>mdi-play</v-icon>
                         Iniciar Quiz
                     </v-btn>
@@ -82,7 +82,7 @@
         </div>
 
         <!-- Diálogo de Resultado -->
-        <v-dialog v-model="showResults">
+        <v-dialog v-model="showResults" persistent>
             <v-card>
                 <v-card-title class="text-h5" style="word-break: break-word;">
                     Resultado do Quiz
@@ -104,7 +104,7 @@
                 </v-card-text>
                 <v-card-actions class="justify-center">
                     <!-- <v-btn size="small" variant="flat" color="warning" @click="resetQuiz">Fazer outro quiz</v-btn> -->
-                    <v-btn size="small" variant="flat" color="success" @click="this.$router.push('/topics')">
+                    <v-btn size="small" variant="flat" color="success" @click="setTopicProperties()">
                         Voltar aos tópicos
                     </v-btn>
                 </v-card-actions>
@@ -120,6 +120,7 @@ export default {
     data() {
         return {
             // Estado do Quiz
+            startQuizTime: new Date(),
             quizStarted: false,
             currentQuestionIndex: 0,
             selectedAnswer: null,
@@ -145,19 +146,18 @@ export default {
             ],
 
             // Perguntas do quiz (mockadas)
-            questions: [
-                /*{
-                    text: 'O que é Inteligência Artificial?',
-                    options: [
-                        { text: 'Um tipo de hardware especializado', correct: false },
-                        { text: 'Sistemas que imitam inteligência humana', correct: true },
-                        { text: 'Uma linguagem de programação', correct: false },
-                        { text: 'Um sistema operacional', correct: false }
-                    ],
-                    explanation: 'IA refere-se a sistemas que imitam funções cognitivas humanas.'
-                },*/
-                // ... (outras perguntas mantidas iguais)
-            ]
+            /*{
+                text: 'O que é Inteligência Artificial?',
+                options: [
+                    { text: 'Um tipo de hardware especializado', correct: false },
+                    { text: 'Sistemas que imitam inteligência humana', correct: true },
+                    { text: 'Uma linguagem de programação', correct: false },
+                    { text: 'Um sistema operacional', correct: false }
+                ],
+                explanation: 'IA refere-se a sistemas que imitam funções cognitivas humanas.'
+            },*/
+            // ... (outras perguntas mantidas iguais)
+            questions: []
         }
     },
 
@@ -251,7 +251,7 @@ export default {
             }
 
             // Remove cabeçalhos markdown (###, ####, etc.)
-            const cleanText = topicData.topic_text.replace(/^#+\s*/gm, '');
+            const cleanText = topicData.topic_text.replace(/^#+\s/gm, '');
 
             // Divide por dois ou mais line breaks para isolar os parágrafos
             const paragraphs = cleanText.split(/\n{2,}/).map(p => p.trim()).filter(p => p);
@@ -294,7 +294,65 @@ export default {
                 console.error('Erro ao extrair JSON:', error);
                 return null;
             }
+        },
+        setTopicProperties() {
+            const topic_id = localStorage.getItem("topic_id");
+            const score = parseInt(this.score);
+            const questions_quantity = parseInt(this.questions.length);
+            const precision = parseFloat(((score / questions_quantity) * 100).toFixed(2));
+
+            console.log("Score:", score);
+            console.log("Questions:", questions_quantity);
+            console.log("Precision:", precision)
+
+            this.updateTopicProgress(topic_id, precision);
+            this.updateTopicQuestions(questions_quantity);
+
+            const quizTotalTime = this.getTimeDifferenceUnit(this.startQuizTime);
+            const timeString = `${quizTotalTime.value} ${quizTotalTime.unit}`;
+            localStorage.setItem("quiz_total_time", timeString);
+            console.log("Tempo total de quiz:", timeString);
+
+            this.$router.push('/topics');
+        },
+        updateTopicProgress(id, newProgress) {
+            const topicsJson = localStorage.getItem('topics');
+            const topics = JSON.parse(topicsJson || '[]');
+
+            const topic = topics.find(t => t.id === id);
+            if (topic) {
+                topic.progress = newProgress;
+                localStorage.setItem('topics', JSON.stringify(topics));
+            }
+        },
+        updateTopicQuestions(id, newQuestions) {
+            const topicsJson = localStorage.getItem('topics');
+            const topics = JSON.parse(topicsJson || '[]');
+
+            const topic = topics.find(t => t.id === id);
+            if (topic) {
+                topic.questions += newQuestions;
+                localStorage.setItem('topics', JSON.stringify(topics));
+            }
+        },
+        getTimeDifferenceUnit(fromDate, toDate = new Date()) {
+            const ms = toDate - fromDate;
+            const seconds = Math.floor(ms / 1000);
+            const minutes = Math.floor(ms / 60000);
+            const hours = Math.floor(ms / 3600000);
+            const days = Math.floor(ms / 86400000);
+            const months = Math.floor(days / 30.44); // média de dias por mês
+            const years = Math.floor(days / 365.25); // média considerando anos bissextos
+
+            if (years >= 1) return { value: years, unit: "ano(s)" };
+            if (months >= 1) return { value: months, unit: "mês(es)" };
+            if (days >= 1) return { value: days, unit: "dia(s)" };
+            if (hours >= 1) return { value: hours, unit: "hora(s)" };
+            if (minutes >= 1) return { value: minutes, unit: "minuto(s)" };
+            return { value: seconds, unit: "segundo(s)" };
         }
+
+
 
     },
 

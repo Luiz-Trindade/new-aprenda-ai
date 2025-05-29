@@ -27,7 +27,7 @@
                         </v-btn>
                         <v-spacer></v-spacer>
                         <span class="text-caption">
-                            {{ topic.questions || 0 }} questões
+                            {{ topic.questions || 0 }} questões feitas
                         </span>
                     </v-card-actions>
                 </v-card>
@@ -79,13 +79,16 @@ function getTopicIcon(category) {
     }[category] || 'mdi-book'
 }
 
-function getDifficultyColor(difficulty) {
-    return {
-        'Fácil': 'green-lighten-2',
-        'Médio': 'orange-lighten-2',
-        'Difícil': 'red-lighten-2',
-        'Variado': 'blue-lighten-2'
-    }[difficulty] || 'grey'
+const getDifficultyColor = (difficulty) => {
+    const colors = {
+        'Fácil'             : 'green-lighten-2',
+        'Médio'             : 'orange-lighten-2',
+        'Difícil'           : 'red-lighten-2',
+        'Variado'           : 'blue-lighten-2',
+        'Enem'              : 'purple-lighten-2',
+        'Concurso Público'  : 'teal-lighten-2'
+    }
+    return colors[difficulty] || 'grey-lighten-2'
 }
 
 // Navegação

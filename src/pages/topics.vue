@@ -32,12 +32,12 @@
                     </v-card-item>
 
                     <v-card-actions>
-                        <v-btn class="elevation-2" variant="flat" rounded="xl" color="warning" @click="startQuiz(topic.title, topic.difficulty)" size="small">
+                        <v-btn class="elevation-2" variant="flat" rounded="xl" color="warning" @click="startQuiz(topic.id, topic.title, topic.difficulty)" size="small">
                             <v-icon start class="mr-1">mdi-lightbulb</v-icon>
                             Testar
                         </v-btn>
                         <v-spacer></v-spacer>
-                        <span class="text-caption">{{ topic.progress || 0 }}% acertividade</span>
+                        <span class="text-caption">{{ topic.progress || 0 }}% de acertividade</span>
                     </v-card-actions>
                 </v-card>
             </v-col>
@@ -111,15 +111,17 @@ const newTopic = ref({
 })
 
 // Opções de dificuldade
-const difficultyLevels = ['Fácil', 'Médio', 'Difícil', 'Variado']
+const difficultyLevels = ['Fácil', 'Médio', 'Difícil', 'Variado', 'Enem', 'Concurso Público']
 
 // Cores para cada nível de dificuldade
 const getDifficultyColor = (difficulty) => {
     const colors = {
-        'Fácil'     : 'green-lighten-2',
-        'Médio'     : 'orange-lighten-2',
-        'Difícil'   : 'red-lighten-2',
-        'Variado'   : 'blue-lighten-2'
+        'Fácil'             : 'green-lighten-2',
+        'Médio'             : 'orange-lighten-2',
+        'Difícil'           : 'red-lighten-2',
+        'Variado'           : 'blue-lighten-2',
+        'Enem'              : 'purple-lighten-2',
+        'Concurso Público'  : 'teal-lighten-2'
     }
     return colors[difficulty] || 'grey-lighten-2'
 }
@@ -185,8 +187,9 @@ function getTopicIcon(category) {
 }
 
 // Navegação
-function startQuiz(title, difficulty) {
+function startQuiz(topic_id, title, difficulty) {
     // router.push(`/quiz/${topicId}`);
+    localStorage.setItem("topic_id", topic_id)
     localStorage.setItem("topic", title);
     localStorage.setItem("difficulty", difficulty);
     

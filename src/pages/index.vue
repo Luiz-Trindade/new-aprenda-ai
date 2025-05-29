@@ -16,7 +16,7 @@
                         <v-icon class="mr-1" color="primary" size="small">
                             mdi-clock-time-four-outline
                         </v-icon>
-                        Você possui 36 horas de aprendizado!
+                        Você possui {{quizTotalTime}} de aprendizado!
                     </p>
                 </v-card>
 
@@ -33,7 +33,7 @@
 
                     <v-card-actions>
                         <v-btn variant="flat" color="success" block rounded="xl" class="elevation-2"
-                            @click="startTopic(randomTopic.title, randomTopic.difficulty)">
+                            @click="startTopic(randomTopic.id, randomTopic.title, randomTopic.difficulty)">
                             <v-icon start>mdi-play</v-icon>
                             Começar
                         </v-btn>
@@ -67,6 +67,8 @@ import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
 
 const router = useRouter();
+
+const quizTotalTime = ref(localStorage.getItem("quiz_total_time") || "0 horas");
 
 // Dados do usuário
 const completedTopics = ref(3);
@@ -127,8 +129,9 @@ function handleAction(action: string) {
 }
 
 // Iniciar tópico específico
-function startTopic(title: any, difficulty: any) {
+function startTopic(topic_id: any, title: any, difficulty: any) {
     // router.push(`/learn/${topic.id}`);
+    localStorage.setItem("topic_id", topic_id)
     localStorage.setItem("topic", title);
     localStorage.setItem("difficulty", difficulty);
     
