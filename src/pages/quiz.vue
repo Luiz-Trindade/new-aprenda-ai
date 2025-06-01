@@ -1,5 +1,5 @@
 <template>
-    <v-container class="fade-in  fill-height d-flex align-center justify-center">
+    <v-container class="fade-in fill-height d-flex align-center justify-center">
         <!-- Tela de Introdução do Tópico -->
         <div v-if="!quizStarted" class="topic-intro">
             <v-card class="pa-6 mb-6" elevation="2">
@@ -9,24 +9,25 @@
                 </v-card-title>
 
                 <v-card-text class="text-body-1">
-                    <div v-if="topicContent.length > 1" class="mb-4" v-for="(paragraph, index) in topicContent"
-                        :key="'para-' + index">
-                        {{ paragraph }}
+                    <div v-if="loading" class="d-flex align-center justify-center flex-column">
+                        <v-progress-circular class="mb-2" :size="70" :width="7" color="blue"
+                            indeterminate></v-progress-circular>
+                        <h4>Carregando conteúdo...</h4>
                     </div>
 
-                    <div v-else style="display: flex; align-items: center; justify-content: center; flex-direction: column;">
-                        <v-progress-circular class="mb-2" :size="70" :width="7" color="blue" indeterminate></v-progress-circular>
-                        <h4>Carregando quiz...</h4>
+                    <div v-else>
+                        <div v-for="(paragraph, index) in topicContent" :key="'para-' + index" class="mb-4">
+                            {{ paragraph }}
+                        </div>
+                        <v-alert type="info" variant="tonal" class="mt-6">
+                            Este quiz contém {{ questions.length }} perguntas sobre o tema. Boa sorte!
+                        </v-alert>
                     </div>
-
-                    <v-alert type="info" variant="tonal" class="mt-6">
-                        Este quiz contém 10 perguntas sobre o tema. Boa sorte!
-                    </v-alert>
                 </v-card-text>
 
                 <v-card-actions>
                     <v-btn variant="flat" block rounded="xl" color="primary" size="large" class="mt-4 elevation-2"
-                        @click="startQuiz" :disabled="!(topicContent.length > 1 && questions.length > 0)">
+                        @click="startQuiz" :disabled="loading || !contentReady">
                         <v-icon start>mdi-play</v-icon>
                         Iniciar Quiz
                     </v-btn>
@@ -103,7 +104,6 @@
                     </div>
                 </v-card-text>
                 <v-card-actions class="justify-center">
-                    <!-- <v-btn size="small" variant="flat" color="warning" @click="resetQuiz">Fazer outro quiz</v-btn> -->
                     <v-btn size="small" variant="flat" color="success" @click="setTopicProperties()">
                         Voltar aos tópicos
                     </v-btn>
@@ -119,6 +119,10 @@ export default {
 
     data() {
         return {
+            // Estados de carregamento
+            loading: true,
+            contentReady: false,
+
             // Estado do Quiz
             startQuizTime: new Date(),
             quizStarted: false,
@@ -129,34 +133,16 @@ export default {
             answerIsCorrect: false,
             showResults: false,
 
-            // Tópico atual (mockado – você pode carregar do localStorage)
+            // Tópico atual
             currentTopic: {
                 id: '1',
-                title: 'Introdução à Inteligência Artificial',
-                difficulty: 'Médio',
-                category: 'ai'
+                title: '',
+                difficulty: '',
+                category: ''
             },
 
-            // Conteúdo do tópico (mockado)
-            topicContent: [
-                /*'Inteligência Artificial (IA) é um ramo da ciência da computação que se concentra no desenvolvimento de sistemas capazes de realizar tarefas que normalmente exigiriam inteligência humana.',
-                'Essas tarefas incluem aprendizado, raciocínio, resolução de problemas, percepção e compreensão de linguagem. A IA pode ser classificada em três tipos: IA estreita (ou fraca), IA geral (ou forte) e superinteligência.',
-                'Aplicações comuns de IA incluem assistentes virtuais, carros autônomos, sistemas de recomendação e diagnósticos médicos. O aprendizado de máquina, um subcampo da IA, permite que os sistemas aprendam e melhorem com a experiência sem serem explicitamente programados.'*/
-                "Aguarde, texto sendo gerado..."
-            ],
-
-            // Perguntas do quiz (mockadas)
-            /*{
-                text: 'O que é Inteligência Artificial?',
-                options: [
-                    { text: 'Um tipo de hardware especializado', correct: false },
-                    { text: 'Sistemas que imitam inteligência humana', correct: true },
-                    { text: 'Uma linguagem de programação', correct: false },
-                    { text: 'Um sistema operacional', correct: false }
-                ],
-                explanation: 'IA refere-se a sistemas que imitam funções cognitivas humanas.'
-            },*/
-            // ... (outras perguntas mantidas iguais)
+            // Conteúdo do tópico
+            topicContent: ["Aguarde, texto sendo gerado..."],
             questions: []
         }
     },
@@ -201,6 +187,45 @@ export default {
     },
 
     methods: {
+        async loadContent() {
+            try {
+                this.loading = true;
+                this.contentReady = false;
+
+                // Executa ambas as requisições em paralelo
+                await Promise.all([
+                    this.fetchTopicText(),
+                    this.fetchTopicQuiz()
+                ]);
+
+                this.contentReady = true;
+            } catch (error) {
+                console.error('Erro ao carregar conteúdo:', error);
+                // Tratamento de erro básico
+                this.topicContent = ["Ocorreu um erro ao carregar o conteúdo. Por favor, tente novamente."];
+            } finally {
+                this.loading = false;
+            }
+        },
+
+        async fetchTopicText() {
+            const topic = localStorage.getItem("topic");
+            const difficulty = localStorage.getItem("difficulty");
+
+            const response = await fetch(`${this.endpoint}/generate_topic_text/${topic}/${difficulty}/`);
+            const data = await response.json();
+            this.topicContent = this.formatTopicText(data);
+        },
+
+        async fetchTopicQuiz() {
+            const topic = localStorage.getItem("topic");
+            const difficulty = localStorage.getItem("difficulty");
+
+            const response = await fetch(`${this.endpoint}/generate_topic_quiz/${topic}/${difficulty}/`);
+            const data = await response.json();
+            this.questions = this.extractJsonFromFormattedString(data);
+        },
+
         startQuiz() {
             this.quizStarted = true
         },
@@ -231,20 +256,6 @@ export default {
             this.showFeedback = false
             this.showResults = false
         },
-        fetchTopicText() {
-            // Usa a variável global `endpoint`
-            const topic = localStorage.getItem("topic");
-            const difficulty = localStorage.getItem("difficulty")
-
-            fetch(`${this.endpoint}/generate_topic_text/${topic}/${difficulty}/`)
-                .then(res => res.json())
-                .then(data => {
-                    // faça algo com a resposta
-                    console.log(data);
-                    this.topicContent = this.formatTopicText(data);
-                })
-                .catch(err => console.error(err))
-        },
         formatTopicText(topicData) {
             if (!topicData || typeof topicData.topic_text !== 'string') {
                 return [];
@@ -265,21 +276,6 @@ export default {
             this.currentTopic.title = topic;
             this.currentTopic.difficulty = difficulty;
         },
-        fetchTopicQuiz() {
-            // Usa a variável global `endpoint`
-            const topic = localStorage.getItem("topic");
-            const difficulty = localStorage.getItem("difficulty")
-            console.log("QUIZ")
-
-            fetch(`${this.endpoint}/generate_topic_quiz/${topic}/${difficulty}/`)
-                .then(res => res.json())
-                .then(data => {
-                    // faça algo com a resposta
-                    console.log(data);
-                    this.questions = this.extractJsonFromFormattedString(data);
-                })
-                .catch(err => console.error(err))
-        },
         extractJsonFromFormattedString(input) {
             try {
                 const raw = input.topic_quiz;
@@ -292,7 +288,7 @@ export default {
                 return parsed;
             } catch (error) {
                 console.error('Erro ao extrair JSON:', error);
-                return null;
+                return [];
             }
         },
         setTopicProperties() {
@@ -301,17 +297,12 @@ export default {
             const questions_quantity = parseInt(this.questions.length);
             const precision = parseFloat(((score / questions_quantity) * 100).toFixed(2));
 
-            console.log("Score:", score);
-            console.log("Questions:", questions_quantity);
-            console.log("Precision:", precision)
-
             this.updateTopicProgress(topic_id, precision);
             this.updateTopicQuestions(topic_id, questions_quantity);
 
             const quizTotalTime = this.getTimeDifferenceUnit(this.startQuizTime);
             const timeString = `${quizTotalTime.value} ${quizTotalTime.unit}`;
             localStorage.setItem("quiz_total_time", timeString);
-            console.log("Tempo total de quiz:", timeString);
 
             this.$router.push('/topics');
         },
@@ -331,7 +322,7 @@ export default {
 
             const topic = topics.find(t => t.id === id);
             if (topic) {
-                topic.questions = parseInt(topic.questions) + parseInt(newQuestions);
+                topic.questions = Number(topic.questions) + Number(newQuestions);
                 localStorage.setItem('topics', JSON.stringify(topics));
             }
         },
@@ -341,8 +332,8 @@ export default {
             const minutes = Math.floor(ms / 60000);
             const hours = Math.floor(ms / 3600000);
             const days = Math.floor(ms / 86400000);
-            const months = Math.floor(days / 30.44); // média de dias por mês
-            const years = Math.floor(days / 365.25); // média considerando anos bissextos
+            const months = Math.floor(days / 30.44);
+            const years = Math.floor(days / 365.25);
 
             if (years >= 1) return { value: years, unit: "ano(s)" };
             if (months >= 1) return { value: months, unit: "mês(es)" };
@@ -351,22 +342,14 @@ export default {
             if (minutes >= 1) return { value: minutes, unit: "minuto(s)" };
             return { value: seconds, unit: "segundo(s)" };
         }
-
-
-
     },
 
     mounted() {
-        // Aqui você pode carregar o tópico de localStorage, se quiser:
-        // const saved = localStorage.getItem('current_topic')
-        // if (saved) this.currentTopic = JSON.parse(saved)
         this.setTopicTitle();
-        this.fetchTopicText();
-        this.fetchTopicQuiz();
+        this.loadContent();
     }
 }
 </script>
-
 
 <style scoped>
 .topic-intro {
