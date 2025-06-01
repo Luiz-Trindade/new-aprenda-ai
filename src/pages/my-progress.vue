@@ -7,19 +7,16 @@
                     Meu Progresso
                 </v-list-subheader>
 
-                <!-- Gráfico de Linha - Progresso Semanal -->
-                <v-card class="mb-6 pa-4">
-                    <h4 class="mb-4">Atividades esta semana</h4>
-                    <apexchart type="line" height="300" :options="weeklyChart.options" :series="weeklyChart.series">
+                <!-- Gráfico de Pizza - Distribuição -->
+                <v-card class="pa-4">
+                    <h4 class="mb-4">Distribuição de acertividade</h4>
+                    <apexchart 
+                        type="pie" 
+                        :options="distributionChart.options" 
+                        :series="distributionChart.series"
+                    >
                     </apexchart>
                 </v-card>
-
-                <!-- Gráfico de Pizza - Distribuição -->
-                <!-- <v-card class="pa-4">
-                    <h2 class="mb-4">Distribuição de tempo</h2>
-                    <apexchart type="pie" height="300" :options="distributionChart.options"
-                        :series="distributionChart.series"></apexchart>
-                </v-card> -->
             </v-col>
         </v-row>
     </v-container>
@@ -29,39 +26,66 @@
 export default {
     data() {
         return {
-            weeklyChart: {
-                series: [{
-                    name: "Horas dedicadas",
-                    data: [2, 3, 1, 4, 2, 5, 0]
-                }],
+            distributionChart: {
+                series: [],
                 options: {
                     chart: {
-                        toolbar: { show: false }
+                        type: 'pie',
                     },
-                    colors: ['#1976D2'],
-                    xaxis: {
-                        categories: ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom']
-                    }
+                    labels: [],
+                    legend: {
+                        position: 'bottom'
+                    },
+                    responsive: [{
+                        breakpoint: 480,
+                        options: {
+                            chart: {
+                                width: 300
+                            },
+                            legend: {
+                                position: 'bottom'
+                            }
+                        }
+                    }]
                 }
-            },
-            // distributionChart: {
-            //     series: [35, 25, 20, 20],
-            //     options: {
-            //         labels: ['Estudos', 'Trabalho', 'Lazer', 'Outros'],
-            //         colors: ['#4CAF50', '#2196F3', '#FFC107', '#9E9E9E'],
-            //         legend: {
-            //             position: 'bottom'
-            //         }
-            //     }
-            // }
+            }
+        }
+    },
+
+    mounted() {
+        this.extractTitlesAndProgress();
+    },
+
+    methods: {
+        extractTitlesAndProgress() {
+            try {
+                const topicsString = localStorage.getItem("topics");
+                if (!topicsString) {
+                    console.warn("Nenhum tópico encontrado no localStorage");
+                    return;
+                }
+
+                const topicsArray = JSON.parse(topicsString);
+                
+                // Extrai apenas os títulos para os labels
+                this.distributionChart.options.labels = topicsArray.map(topic => topic.title);
+                
+                // Extrai apenas os progressos para as séries
+                this.distributionChart.series = topicsArray.map(topic => topic.progress);
+                
+                console.log("Dados do gráfico atualizados:", {
+                    labels: this.distributionChart.options.labels,
+                    series: this.distributionChart.series
+                });
+            } catch (error) {
+                console.error("Erro ao processar tópicos:", error);
+            }
         }
     }
 }
 </script>
 
 <style scoped>
-
-
 .primary--text {
     color: #1976D2;
 }
