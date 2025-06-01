@@ -86,7 +86,8 @@ const getDifficultyColor = (difficulty) => {
         'Difícil'           : 'red-lighten-2',
         'Variado'           : 'blue-lighten-2',
         'Enem'              : 'purple-lighten-2',
-        'Concurso Público'  : 'teal-lighten-2'
+        'Concurso Público'  : 'teal-lighten-2',
+        'Simulado'          : 'cyan-lighten-2'
     }
     return colors[difficulty] || 'grey-lighten-2'
 }

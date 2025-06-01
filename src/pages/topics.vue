@@ -111,7 +111,16 @@ const newTopic = ref({
 })
 
 // Opções de dificuldade
-const difficultyLevels = ['Fácil', 'Médio', 'Difícil', 'Variado', 'Enem', 'Concurso Público']
+const difficultyLevels = [
+    'Fácil', 
+    'Médio', 
+    'Difícil', 
+    'Variado', 
+    'Enem',
+    'Simulado de faculdade',
+    'Concurso Público',
+    'Simulado'
+]
 
 // Cores para cada nível de dificuldade
 const getDifficultyColor = (difficulty) => {
@@ -121,7 +130,8 @@ const getDifficultyColor = (difficulty) => {
         'Difícil'           : 'red-lighten-2',
         'Variado'           : 'blue-lighten-2',
         'Enem'              : 'purple-lighten-2',
-        'Concurso Público'  : 'teal-lighten-2'
+        'Concurso Público'  : 'teal-lighten-2',
+        'Simulado'          : 'cyan-lighten-2'
     }
     return colors[difficulty] || 'grey-lighten-2'
 }
