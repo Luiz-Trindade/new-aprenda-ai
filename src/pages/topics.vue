@@ -117,7 +117,7 @@ const difficultyLevels = [
     'Difícil', 
     'Variado', 
     'Enem',
-    'Simulado de faculdade',
+    'Simulado',
     'Concurso Público',
     'Simulado'
 ]
