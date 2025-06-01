@@ -143,7 +143,8 @@ export default {
 
             // Conteúdo do tópico
             topicContent: ["Aguarde, texto sendo gerado..."],
-            questions: []
+            questions: [],
+            userAnswers: [] // Novo array para armazenar as respostas
         }
     },
 
@@ -234,9 +235,26 @@ export default {
             const opt = this.currentQuestion.options[this.selectedAnswer]
             this.answerIsCorrect = opt && opt.correct
 
+            // Armazena a resposta do usuário
+            this.storeUserAnswer();
+
             if (this.answerIsCorrect) {
                 this.score++
             }
+        },
+        // Nova função para armazenar a resposta
+        storeUserAnswer() {
+            this.userAnswers.push({
+                questionIndex: this.currentQuestionIndex,
+                questionText: this.currentQuestion.text,
+                selectedOptionIndex: this.selectedAnswer,
+                selectedOptionText: this.currentQuestion.options[this.selectedAnswer]?.text,
+                isCorrect: this.answerIsCorrect,
+                correctAnswerText: this.correctAnswerText,
+                timestamp: new Date()
+            });
+
+            console.log("Resposta armazenada:", this.userAnswers[this.userAnswers.length - 1]);
         },
         nextQuestion() {
             this.showFeedback = false
@@ -303,6 +321,10 @@ export default {
             const quizTotalTime = this.getTimeDifferenceUnit(this.startQuizTime);
             const timeString = `${quizTotalTime.value} ${quizTotalTime.unit}`;
             localStorage.setItem("quiz_total_time", timeString);
+            
+            // Salva as respostas no localStorage
+            localStorage.setItem(topic_id, JSON.stringify(this.userAnswers));
+            console.log("Todas as respostas salvas:", this.userAnswers);
 
             this.$router.push('/topics');
         },

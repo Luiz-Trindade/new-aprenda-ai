@@ -96,6 +96,7 @@ const getDifficultyColor = (difficulty) => {
 function viewDetails(topicId) {
     localStorage.getItem("topic-result");
     // router.push(`/results/${topicId}`)
+    localStorage.setItem("topic_result_id", topicId);
     router.push("/topic-result")
 }
 
