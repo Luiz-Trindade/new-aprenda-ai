@@ -306,7 +306,7 @@ export default {
             console.log("Precision:", precision)
 
             this.updateTopicProgress(topic_id, precision);
-            this.updateTopicQuestions(questions_quantity);
+            this.updateTopicQuestions(topic_id, questions_quantity);
 
             const quizTotalTime = this.getTimeDifferenceUnit(this.startQuizTime);
             const timeString = `${quizTotalTime.value} ${quizTotalTime.unit}`;
@@ -331,7 +331,7 @@ export default {
 
             const topic = topics.find(t => t.id === id);
             if (topic) {
-                topic.questions += newQuestions;
+                topic.questions = parseInt(topic.questions) + parseInt(newQuestions);
                 localStorage.setItem('topics', JSON.stringify(topics));
             }
         },

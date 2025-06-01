@@ -93,7 +93,9 @@ const getDifficultyColor = (difficulty) => {
 
 // Navegação
 function viewDetails(topicId) {
-    router.push(`/results/${topicId}`)
+    localStorage.getItem("topic-result");
+    // router.push(`/results/${topicId}`)
+    router.push("/topic-result")
 }
 
 function navigateTo(route) {

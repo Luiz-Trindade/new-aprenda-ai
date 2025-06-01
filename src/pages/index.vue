@@ -110,7 +110,7 @@ function getTopicDescription(difficulty) {
 const mainActions = [
     { text: "Explorar Tópicos", icon: "mdi-book-open", action: "explore" },
     // { text: "Testar Conhecimento", icon: "mdi-play-circle", action: "quiz" },
-    { text: "Meu Progresso", icon: "mdi-chart-line", action: "progress" },
+    { text: "Meu Progresso", icon: "mdi-chart-line", action: "my-progress" },
 ];
 
 // Manipulador de ações
@@ -122,8 +122,8 @@ function handleAction(action: string) {
         case "quiz":
             startRandomQuiz();
             break;
-        case "progress":
-            router.push("/progress");
+        case "my-progress":
+            router.push("/my-progress");
             break;
     }
 }
